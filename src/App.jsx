@@ -12,26 +12,31 @@ function App() {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const [error, setError] = useState("");
+  const [fullImage, setFullImage] = useState("");
+  const [flag, setFlag] = useState(false);
+
+  let index;
 
   //fetch the image from the server.
   const fetchImages = useCallback(async () => {
     try {
-      setError("")
-      if(searchInput.current.value){
-         const { data } = await axios.get(
-           `${API_URL}?query=${
-             searchInput.current.value
-           }&page=${page}&per_page=${imagePerPage}&client_id=${
-             import.meta.env.VITE_API_KEY
-           }`
-         );
-         setImages(data.results);
-         setTotalPage(data.total_pages);
-      }} catch (error) {
-        setError("Sorry... try again later...")
+      setError("");
+      if (searchInput.current.value) {
+        const { data } = await axios.get(
+          `${API_URL}?query=${
+            searchInput.current.value
+          }&page=${page}&per_page=${imagePerPage}&client_id=${
+            import.meta.env.VITE_API_KEY
+          }`
+        );
+        setImages(data.results);
+        setTotalPage(data.total_pages);
+      }
+    } catch (error) {
+      setError("Sorry... try again later...");
     }
-  },[page]);
-  
+  }, [page]);
+
   //render every time when changes happend.
   useEffect(() => {
     fetchImages();
@@ -53,6 +58,35 @@ function App() {
   const handleSelection = (selection) => {
     searchInput.current.value = selection;
     handleImageFirst();
+  };
+
+  //make the image full size when click the image.
+  const handleFullImage = (imageUrl) => {
+    setFullImage(imageUrl);
+    setFlag(true);
+  };
+
+  //for slide the images to the previous.
+  const handleImageChange = () => {
+    images.map((image) => {
+      if (image.urls.regular === fullImage) {
+        index = images.indexOf(image);
+      }
+    });
+  };
+
+  //for view previous images.
+  const handlePreviousImage = () => {
+    handleImageChange();
+    index--;
+    handleFullImage(images[index].urls.regular);
+  };
+
+  //for view next images.
+  const handleNextImage = () => {
+    handleImageChange();
+    index++;
+    handleFullImage(images[index].urls.regular);
   };
 
   return (
@@ -80,6 +114,7 @@ function App() {
           {images.map((image) => {
             return (
               <img
+                onClick={() => handleFullImage(image.urls.regular)}
                 key={image.id}
                 src={image.urls.small}
                 alt={image.description}
@@ -101,6 +136,34 @@ function App() {
             </Button>
           )}
         </div>
+        {/* if flag true then only it will display otherwise it will be hidden. */}
+        {flag ? (
+          <div className="fullsize">
+            <img src={fullImage} alt="" />
+            <span
+              className="material-symbols-outlined close"
+              onClick={() => setFlag(false)}>
+              close
+            </span>
+      
+            <span
+              className="material-symbols-outlined previous"
+              onClick={() => handlePreviousImage()}>
+              arrow_back_ios
+            </span>
+
+            <span
+              className="material-symbols-outlined next"
+              onClick={() => {
+                handleNextImage();
+              }}>
+              arrow_forward_ios
+            </span>
+          </div>
+        ) : (
+          ""
+        )}
+        ;
       </div>
     </>
   );
