@@ -155,3 +155,51 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.fullsize{
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 60px 100px;
+  background-color: rgba(0,0,0, 0.5);
+
+  & img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  & .close{
+    position: fixed;
+    top: 40px;
+    right: 50px;
+    color: white;
+    padding: 5px;
+    background-color: rgba(65, 65, 65, 0.722);
+    border-radius: 50%;
+  }
+
+  & .previous{
+    position: fixed;
+    top: 45%;
+    left: 20px;
+    color: white;
+    padding: 15px;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+& .next{
+   position: fixed;
+    top: 45%;
+    right: 20px;
+    color: white;
+    padding: 15px;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+}
+}
